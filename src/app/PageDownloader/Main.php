@@ -6,10 +6,14 @@ use \Exception;
 use Http\Request;
 use Util\Conversions;
 use IO\File;
+use PageDownloader\DomSourceResolver;
+use PageDownloader\SmartDOMDocument;
+use PageDownloader\CssSourceResolver;
 
 class Main {
 	
 	const ROOT_HTTP_DIR = '/output';
+	const FS_ROOT = '../../output';
 	
 	/**
 	 * Main application initializer
@@ -33,5 +37,25 @@ class Main {
 		
 		// get page ref
 		$page = new Request($qs['url']->getValue());
+		$contents = $page->request()->getResponseBody();
+
+		// handle inline CSS images
+		$contents = CssSourceResolver::convertUrlFunctions($contents, $page->getUrlFragments()->host);
+
+		$dom = new SmartDOMDocument('1.0');
+		$dom->resolveExternals = true;
+		$dom->substituteEntities = false;
+		$dom->loadHTML($contents);
+		
+		// update sources
+		$domSourceResolver = new DomSourceResolver($dom);
+		$domSourceResolver->setHost($page->getUrlFragments()->host);
+		$domSourceResolver
+			->convert('CSS')
+			->convert('JavaScript')
+			->convert('images')
+			->convert('objects');
+		
+		//echo $dom->saveHTML();
 	}
 }

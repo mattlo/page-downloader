@@ -17,6 +17,7 @@ function handleError($errno, $errstr, $errfile, $errline, array $errcontext) {
     throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
 }
 
+
 //set_error_handler('handleError');
 //error_reporting(E_ERROR | E_PARSE); // DOMDocument warnings on mal-formed html
 

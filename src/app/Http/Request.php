@@ -21,7 +21,7 @@ class Request {
 		// get path info and set as properties
 		$pathInfo = (object) pathinfo($this->getUrl());
 		$this->setBasename($pathInfo->basename);
-		$this->setExtension($pathInfo->extension);
+		//$this->setExtension($pathInfo->extension);
 		$this->setFilename($pathInfo->filename);
 		$this->setUrlFragments($url);
 	}
@@ -92,6 +92,7 @@ class Request {
 
 	public function setUrlFragments($urlFragments) {
 		$this->urlFragments = (object) parse_url($urlFragments);
+		
 		return $this;
 	}
 }

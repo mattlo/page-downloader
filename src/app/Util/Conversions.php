@@ -45,7 +45,24 @@ class Conversions {
 		return $output;
 	}
 	
-	static public function generatePathFromUrl($url, $directory = '.') {
+	/**
+	 * Resolves ./ and ../  in URLs
+	 * @param type $path
+	 * @return type
+	 */
+	static public function canonicalizeStringPath($path) {
+		$path = explode('/', $path);
+		$newpath = array();
+		for ($i = 0; $i < sizeof($path); $i++) {
+			if ($path[$i] === '' || $path[$i] === '.')
+				continue;
+			if ($path[$i] === '..') {
+				array_pop($newpath);
+				continue;
+			}
+			array_push($newpath, $path[$i]);
+		}
 		
+		return "/" . implode('/', $newpath);
 	}
 }
