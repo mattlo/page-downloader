@@ -56,6 +56,6 @@ class Main {
 			->convert('images')
 			->convert('objects');
 		
-		//echo $dom->saveHTML();
+		echo $dom->saveHTML();
 	}
 }
