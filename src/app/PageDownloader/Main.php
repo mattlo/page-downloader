@@ -12,8 +12,9 @@ use PageDownloader\CssSourceResolver;
 
 class Main {
 	
-	const ROOT_HTTP_DIR = '/output';
 	const FS_ROOT = '../../output';
+	
+	public static $ROOT_HTTP_DIR = '/output';
 	
 	/**
 	 * Main application initializer
@@ -32,12 +33,18 @@ class Main {
 		$qs = Conversions::getListFromQueryString($qs);
 		
 		if (isset($qs['url']) === false) {
-			throw new Exception('Url not set');
+			throw new Exception('url not set');
 		}
+		
+		if (isset($qs['srcroot']) === false) {
+			throw new Exception('srcroot not set');
+		}
+		
+		// set src root
+		self::$ROOT_HTTP_DIR = $qs['srcroot']->getValue();
 		
 		// get page ref
 		$page = new Request($qs['url']->getValue());
-		print_r($page);
 		$contents = $page->request()->getResponseBody();
 
 		// handle inline CSS images
@@ -63,6 +70,7 @@ class Main {
 			$path = str_replace('.' . $page->getExtension(), '.html', $path);
 		}
 		
+		// output file
 		$file = new File(self::FS_ROOT . $path);
 		$file->write($dom->saveHTML());
 	}

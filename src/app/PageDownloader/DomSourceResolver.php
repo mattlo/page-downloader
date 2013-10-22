@@ -74,7 +74,7 @@ class DomSourceResolver {
 				}
 
 				// update node
-				$styleTag->setAttribute('href', Main::ROOT_HTTP_DIR . self::CSS_DIR .  $styleTag->getAttribute('href'));
+				$styleTag->setAttribute('href', Main::$ROOT_HTTP_DIR . self::CSS_DIR .  $styleTag->getAttribute('href'));
 			}
 		}
 	}
@@ -124,11 +124,11 @@ class DomSourceResolver {
 				if ($requiredAttr !== null) {
 					if ($paramTag->getAttribute($requiredAttr) === $requiredValue) {
 						File::download('http://' . $this->host . $paramTag->getAttribute($key), Main::FS_ROOT . $directory, false);
-						$paramTag->setAttribute($key, Main::ROOT_HTTP_DIR . $directory .  $paramTag->getAttribute($key));
+						$paramTag->setAttribute($key, Main::$ROOT_HTTP_DIR . $directory .  $paramTag->getAttribute($key));
 					}
 				} else {
 					File::download('http://' . $this->host . $paramTag->getAttribute($key), Main::FS_ROOT . $directory, false);
-					$paramTag->setAttribute($key, Main::ROOT_HTTP_DIR . $directory .  $paramTag->getAttribute($key));
+					$paramTag->setAttribute($key, Main::$ROOT_HTTP_DIR . $directory .  $paramTag->getAttribute($key));
 				}
 				
 			}

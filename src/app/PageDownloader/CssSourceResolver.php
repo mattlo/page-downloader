@@ -56,7 +56,7 @@ class CssSourceResolver {
 				$file = File::download('http://' . $host . $imagePath, Main::FS_ROOT . DomSourceResolver::ASSET_DIR);
 				
 				// replace resource
-				$inputString = str_replace($image, '' . Main::ROOT_HTTP_DIR . DomSourceResolver::ASSET_DIR . $imagePath, $inputString);
+				$inputString = str_replace($image, '' . Main::$ROOT_HTTP_DIR . DomSourceResolver::ASSET_DIR . $imagePath, $inputString);
 				
 				// release
 				$file->releaseContents();
