@@ -37,6 +37,7 @@ class Main {
 		
 		// get page ref
 		$page = new Request($qs['url']->getValue());
+		print_r($page);
 		$contents = $page->request()->getResponseBody();
 
 		// handle inline CSS images
@@ -56,6 +57,13 @@ class Main {
 			->convert('images')
 			->convert('objects');
 		
-		echo $dom->saveHTML();
+		// convert extension to HTML?
+		$path = $page->getUrlFragments()->path;
+		if (isset($qs['htmlext']) === true) {
+			$path = str_replace('.' . $page->getExtension(), '.html', $path);
+		}
+		
+		$file = new File(self::FS_ROOT . $path);
+		$file->write($dom->saveHTML());
 	}
 }
