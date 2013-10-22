@@ -3,7 +3,7 @@ This is a utility program that will download web pages with assets based on prov
 Downloads:
 - HTML with preserved extension (e.g.: /path/to/page.aspx saves as page.aspx)
 - CSS (from `<link />`s)
-- Assets using the `url` method in all CSS files
+- Assets using the `url` method in all CSS
 - JavaScript (from `<script />`s)
 - Images (from `<img />`s)
 
