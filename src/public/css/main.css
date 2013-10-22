@@ -25,3 +25,11 @@
 .input-group + .input-group {
 	padding-top: 10px;
 }
+
+.restart-btn {
+	margin-right: 10px;
+}
+
+a.url {
+	margin-right: 10px;
+}
