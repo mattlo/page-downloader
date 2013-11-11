@@ -65,4 +65,12 @@ class Conversions {
 		
 		return "/" . implode('/', $newpath);
 	}
+	
+	static public function resolveReferencePath($path, $prefixPath) {
+		if (substr($path, 0, 1) !== '/') {
+			$path = $prefixPath . $path;
+		}
+		
+		return $path;
+	}
 }

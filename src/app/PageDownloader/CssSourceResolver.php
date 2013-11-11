@@ -11,15 +11,17 @@ class CssSourceResolver {
 	
 	protected $host;
 	protected $file;
+	protected $path;
 	
 	/**
 	 * Construct
 	 * @param \IO\File $file
 	 * @param type $host
 	 */
-	public function __construct(File $file, $host) {
+	public function __construct(File $file, $host, $path) {
 		$this->host = $host;
 		$this->file = $file;
+		$this->path = $path;
 	}
 	
 	/**
@@ -46,7 +48,7 @@ class CssSourceResolver {
 		
 		foreach($matches[3] as $image) {
 			
-			if (in_array($image, $filesImported) === false) {
+			if (in_array($image, $filesImported) === false && strpos('//', $image) === false) {
 				$filesImported[] = $image;
 				
 				// image path

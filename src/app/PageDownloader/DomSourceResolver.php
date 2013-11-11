@@ -6,6 +6,7 @@ use IO\File;
 use PageDownloader\Main;
 use PageDownloader\CssSourceResolver;
 use PageDownloader\SmartDOMDocument;
+use Util\Conversions;
 
 /**
  * **NOTE**: Source resolver assumes all refs are absolute
@@ -16,6 +17,7 @@ class DomSourceResolver {
 	
 	protected $dom;
 	protected $host;
+	protected $path;
 	
 	const CSS_DIR = '/css';
 	const JS_DIR = '/js';
@@ -63,18 +65,18 @@ class DomSourceResolver {
 			$styleTag = $styleTags->item($i);
 			
 			// match non print valid external styles
-			if ($styleTag->getAttribute('media') !== 'print') {
-				$file = File::download('http://' . $this->host . $styleTag->getAttribute('href'), Main::FS_ROOT . self::CSS_DIR, false);
+			if ($styleTag->getAttribute('media') !== 'print' && strpos('//', $styleTag->getAttribute('href')) === false) {
+				$file = File::download('http://' . $this->host . Conversions::resolveReferencePath($styleTag->getAttribute('href'), $this->path), Main::FS_ROOT . self::CSS_DIR, false);
 				
 				// only handle assets if file doesnt exist
 				if ($file->getExists() === false) {
 					// download references in CSS file
-					$referenceResolver = new CssSourceResolver($file, $this->host);
+					$referenceResolver = new CssSourceResolver($file, $this->host, $this->path);
 					$referenceResolver->convertAndPersist();
 				}
 
 				// update node
-				$styleTag->setAttribute('href', Main::$ROOT_HTTP_DIR . self::CSS_DIR .  $styleTag->getAttribute('href'));
+				$styleTag->setAttribute('href', Main::$ROOT_HTTP_DIR . self::CSS_DIR .  Conversions::resolveReferencePath($styleTag->getAttribute('href'), $this->path));
 			}
 		}
 	}
@@ -120,15 +122,15 @@ class DomSourceResolver {
 			$paramTag = $paramTags->item($i);
 			
 			// match non print valid external scripts
-			if (strlen($paramTag->getAttribute($key)) > 0) {
+			if (strlen($paramTag->getAttribute($key)) > 0 && strpos('//', $paramTag->getAttribute($key) === false)) {
 				if ($requiredAttr !== null) {
 					if ($paramTag->getAttribute($requiredAttr) === $requiredValue) {
-						File::download('http://' . $this->host . $paramTag->getAttribute($key), Main::FS_ROOT . $directory, false);
-						$paramTag->setAttribute($key, Main::$ROOT_HTTP_DIR . $directory .  $paramTag->getAttribute($key));
+						File::download('http://' . $this->host . Conversions::resolveReferencePath($paramTag->getAttribute($key), $this->path), Main::FS_ROOT . $directory, false);
+						$paramTag->setAttribute($key, Main::$ROOT_HTTP_DIR . $directory .  Conversions::resolveReferencePath($paramTag->getAttribute($key), $this->path));
 					}
 				} else {
-					File::download('http://' . $this->host . $paramTag->getAttribute($key), Main::FS_ROOT . $directory, false);
-					$paramTag->setAttribute($key, Main::$ROOT_HTTP_DIR . $directory .  $paramTag->getAttribute($key));
+					File::download('http://' . $this->host . Conversions::resolveReferencePath($paramTag->getAttribute($key), $this->path), Main::FS_ROOT . $directory, false);
+					$paramTag->setAttribute($key, Main::$ROOT_HTTP_DIR . $directory .  Conversions::resolveReferencePath($paramTag->getAttribute($key), $this->path));
 				}
 				
 			}
@@ -151,5 +153,13 @@ class DomSourceResolver {
 	public function setHost($host) {
 		$this->host = $host;
 		return $this;
+	}
+	
+	public function getPath() {
+		return $this->path;
+	}
+
+	public function setPath($path) {
+		$this->path = $path;
 	}
 }

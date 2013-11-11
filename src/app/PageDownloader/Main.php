@@ -45,10 +45,12 @@ class Main {
 		
 		// get page ref
 		$page = new Request($qs['url']->getValue());
+		$path = $page->getUrlFragments()->path;
+		$dirPath = dirname($path) . '/';
 		$contents = $page->request()->getResponseBody();
 
 		// handle inline CSS images
-		$contents = CssSourceResolver::convertUrlFunctions($contents, $page->getUrlFragments()->host);
+		$contents = CssSourceResolver::convertUrlFunctions($contents, $page->getUrlFragments()->host, $dirPath);
 
 		$dom = new SmartDOMDocument('1.0');
 		$dom->resolveExternals = true;
@@ -58,14 +60,13 @@ class Main {
 		// update sources
 		$domSourceResolver = new DomSourceResolver($dom);
 		$domSourceResolver->setHost($page->getUrlFragments()->host);
+		$domSourceResolver->setPath($dirPath);
 		$domSourceResolver
 			->convert('CSS')
 			->convert('JavaScript')
 			->convert('images')
 			->convert('objects');
 		
-		// convert extension to HTML?
-		$path = $page->getUrlFragments()->path;
 		if (isset($qs['htmlext']) === true) {
 			$path = str_replace('.' . $page->getExtension(), '.html', $path);
 		}
